@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Java Website Monitor (JWM) - Copyright (C) 2004 - Marc Schroeder - http://forum.phoeniix.com/ -->
+
+<data>
+	<emailmethod>smtp</emailmethod>								<!--[smtp]-->
+
+	<emailsmtpserver>smtp.yourserver.com</emailsmtpserver>
+	<emailsmtpport>25</emailsmtpport>							<!--[25|465]-->
+	<emailsmtpssl>false</emailsmtpssl>							<!--For more information see: http://lists.canoo.com/pipermail/webtest/2004q4/002575.html-->
+	<emailsmtpauth>true</emailsmtpauth>
+	<emailsmtpuser>username@yourdomain.com</emailsmtpuser>
+	<emailsmtppw>password</emailsmtppw>
+
+	<emailfrom>username@yourdomain.com</emailfrom>
+	<emailto>username@yourdomain.com</emailto>
+	<emailcc>ccusername@yourdomain.com</emailcc>
+
+	<emailsubject>Website Down!</emailsubject>
+	<emailmsg>There is a problem with:</emailmsg>
+
+	<!-- Add unlimited number of sites to monitor -->
+	<site>http://www.phoeniix.com</site>
+	<site>http://www.madskills.info</site>
+        <site>http://www.csatravelprotectionn.com</site>
+</data>
