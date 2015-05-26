@@ -19,11 +19,18 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import javafx.scene.input.MouseEvent;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.input.MouseEvent;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBuilder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.*;
@@ -52,13 +59,18 @@ public class JWebMonitor extends Application {
     static String emailpw = new String();
     
     private static Button btn;
+    private static Text text;
+    private static StringProperty output = new SimpleStringProperty();
+//    private static TextField textField;
 
         
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println("" +
+        output.set("Log");
+                
+        output.set(output.get() + "\n" + "" +
             "=====================================================\n" +
             "=== Java Web Monitor (JWebMonitor)\n" +
             "=== Copyright (C) 2015 - Marc Schroeder\n" +
@@ -73,8 +85,7 @@ public class JWebMonitor extends Application {
 
         // Get values from the config file
         try {
-            File file;
-            file = new File("config.xml");
+            File file = new File("config.xml");
             
             DocumentBuilder builder = DocumentBuilderFactory
                     .newInstance()
@@ -82,11 +93,11 @@ public class JWebMonitor extends Application {
             Document doc = builder.parse(file);
 
             // site info
-            System.out.println("\n[Adding Sites...]");
+            output.set(output.get() + "\n" + "\n[Adding Sites...]");
             sitelist = createArray(doc, "data", "site");                    // get list of websites
 
             // Type of notification
-            System.out.println("\n[Adding email data...]");
+            output.set(output.get() + "\n" + "\n[Adding email data...]");
             emailmethod = createString(doc, "data", "emailmethod");
             emailsmtpauth = createString(doc, "data", "emailsmtpauth");
 
@@ -110,7 +121,7 @@ public class JWebMonitor extends Application {
             emailsmtpssl = createString(doc, "data", "emailsmtpssl");            // Get smtp use ssl?
         }
         catch (Exception e) {
-            System.out.println(messages.getString("cantFindConfig"));
+            output.set(output.get() + "\n" + messages.getString("cantFindConfig"));
             return;
         }
         
@@ -122,11 +133,12 @@ public class JWebMonitor extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("JWebMonitor");
+                
         Group root = new Group();
-        Scene scene = new Scene(root, 300, 250);
+        
         btn = new Button();
-        btn.setLayoutX(100);
-        btn.setLayoutY(80);
+        btn.setLayoutX(0);
+        btn.setLayoutY(0);
         btn.setText("Start Scanning...");
         btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
@@ -140,8 +152,35 @@ public class JWebMonitor extends Application {
             }
         });
         root.getChildren().add(btn);
+        
+//        Group g = new Group(gg -> {
+//            gg.getChildren().addAll(new Button(b -> {
+//                b.setText("Hello");
+//            });
+//        });
+        
+	text = TextBuilder
+            .create()
+//            .text("Log")
+            .font(new Font(10))
+            .stroke(Color.BLACK)
+            .fill(Color.WHEAT)
+            .font(Font.font("Ubuntu", 41))
+//            .effect(new Glo())
+            .build();
+        text.setLayoutX(0);
+        text.setLayoutY(60);
+//        TextField textField = neww TextField();
+//        textField.setText("Neon Sign");
+        text.textProperty().bind(output);
+        root.getChildren().add(text);
+        
+        Scene scene = new Scene(root, 1024, 768);
         primaryStage.setScene(scene);
+        primaryStage.sizeToScene();
         primaryStage.show();
+        
+        output.set("hey");
     }
     
     
@@ -149,19 +188,19 @@ public class JWebMonitor extends Application {
     public void startScanning(){
         // Quit app if no websites listed
         if (sitelist.isEmpty()) {
-            System.out.println(messages.getString("addWebsites"));
+            output.set(output.get() + "\n" + messages.getString("addWebsites"));
             btn.setText(messages.getString("startScanning"));
             return;
         }
 
                         
         // connect to website and if problem (exception) then run notifier else do nothing
-        System.out.println(messages.getString("testingWebsites"));
+        output.set(output.get() + "\n" + messages.getString("testingWebsites"));
         for (int i = 0; i < sitelist.size(); i++) {
             try {
                 URL url = new URL(sitelist.get(i).toString());
 
-                System.out.println("*** Testing " + url);
+                output.set(output.get() + "\n" + "*** Testing " + url);
                 long begin = System.currentTimeMillis();            // Record start time
                 URLConnection uc = url.openConnection();            // Open connection to website
                 uc.setConnectTimeout(5000);
@@ -171,9 +210,9 @@ public class JWebMonitor extends Application {
 
                 long end = System.currentTimeMillis();                // Record end time
                 float timeToLoad = (((float) (end - begin)) / 1000);    // Convert to floating number
-                System.out.println(">>> " + url + " is responding! Time: " + timeToLoad + " seconds.\n");
+                output.set(output.get() + "\n" + ">>> " + url + " is responding! Time: " + timeToLoad + " seconds.\n");
 
-//                System.out.println("Response: " + response);
+//                output.set(output.get() + "\n" + "Response: " + response);
                 if (!response.contains("<title>"))
                     throw new Exception("Expected string not found.");
             }
@@ -215,7 +254,7 @@ public class JWebMonitor extends Application {
 
             String text = sb.toString().trim();
             thestring = text;
-            System.out.println(">>> Added " + childsection + ": " + text);
+            output.set(output.get() + "\n" + ">>> Added " + childsection + ": " + text);
         }
         return thestring;
     }// End createString method
@@ -247,7 +286,7 @@ public class JWebMonitor extends Application {
 
                 String text = sb.toString().trim();
                 thearray.add(text);
-                System.out.println(">>> Added " + childsection + ": " + text);
+                output.set(output.get() + "\n" + ">>> Added " + childsection + ": " + text);
             }
         }
         return thearray;
