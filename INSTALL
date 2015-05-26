@@ -1,0 +1,57 @@
+Java Website Monitor (JWebMonitor) - GPL
+Author:  Marc Schroeder
+Website: http://www.phoeniix.com
+Email:   webmaster(at)phoeniix.com
+===================================================
+INSTALL.txt
+
+
+
+How to use
+---------------------------------------------------
+1. Ensure that you have either the Java SDK or VM installed on your computer 
+and a path definition to the java executable.
+
+2. This class requires the JavaMail API and the Java Activation Framework.  
+Copy the mail.jar and activation.jar files to the /jre/lib/ext folder in 
+your java installation.  (ie <javaroot>/jre/lib/ext/mail.jar)
+
+3. Extract all files to a location on your drive.  They will extract to 
+the /jwm folder.
+
+4. Edit the config.xml file and enter the websites you wish to check and the 
+emails problems will be sent to.
+
+5. run JWebMonitor with the command 'java JWebMonitor "/path/to/config.xml"'.
+
+
+
+Install as a cron job
+---------------------------------------------------
+[xNIX]
+To set this up as a cron job in xNIX systems, Add the following to the bottom of crontab (/etc/crontab):
+
+#Run scripts in cron.hourly on first minute of every hour
+	01 * * * * <jwmfolderlocation>/runJWM.sh /etc/cron.hourly
+
+#Run scripts in cron.daily at 0:02 each day
+	02 0 * * * <jwmfolderlocation>/runJWM.sh /etc/cron.daily
+
+#Run scripts in cron.weekly at 2:45 each Saturday
+	45 2 * * 6 <jwmfolderlocation>/runJWM.sh /etc/cron.weekly
+
+#Run scripts in cron.monthly at  0:03 on the firstday of each month
+	03 0 1 * * <jwmfolderlocation>/runJWM.sh /etc/cron.monthly
+
+#Run scripts in cron.yearly at 0:04 each January 1.
+	04 0 1 1 * <jwmfolderlocation>/runJWM.sh /etc/cron.yearly
+
+
+
+[Windows]
+Set up a scheduled task to execute <jwmfolderlocation>/runJWM.bat at your requested times.
+
+
+
+[Troubleshooting]
+see http://www.phoeniix.com/phpbb/
